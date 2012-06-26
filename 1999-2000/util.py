@@ -1,3 +1,5 @@
+import operator
+
 
 def remove_by_limits(hashmap, VALUE_KEY, minv, maxv):
     """
@@ -58,7 +60,7 @@ def test_kwargs(hashmap, only_test={}, float_limits={}, **kwargs):
     for k, tup in float_limits.items():
         remove_by_limits(nhanes, k, *tup)
     for k, tup in kwargs.items():
-        remove_if_not_in(nhanes, k, tup)
+        remove_if_not_in(nhanes, k, reduce(operator.add, tup))
  
     l = len(kwargs.values()[0])
     # kwargs like (imq020=("1", "3"), mcq060=("1", "2"))
@@ -84,7 +86,7 @@ def test_kwargs(hashmap, only_test={}, float_limits={}, **kwargs):
             outcomek = keys[1]
             exposurev = kwargs[exposurek][i]
             outcomev = kwargs[outcomek][j]
-            pairs = (exposurek, [exposurev]), (outcomek, [outcomev])
+            pairs = (exposurek, exposurev), (outcomek, outcomev)
             c = count(nhanes, dict(pairs))
             row += "%s\t" % c
             contingency_table[i][j] = c

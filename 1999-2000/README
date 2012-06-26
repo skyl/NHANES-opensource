@@ -1,0 +1,9 @@
+R deps (Ubuntu):
+sudo apt-get install r-cran-epicalc r-cran-hmisc r-cran-rcmdr
+
+downloads from:
+http://www.cdc.gov/nchs/nhanes/nhanes1999-2000/nhanes99_00.htm
+
+
+
+
