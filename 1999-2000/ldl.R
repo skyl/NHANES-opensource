@@ -1,6 +1,6 @@
 "
-Hello
-
+LDL as an independent variable.
+Predictive of CVD/Diabetes/etc?
 "
 
 library(car)
@@ -48,26 +48,26 @@ attach(mydata)
 sobsi <- factor(cdq010, c("2", "1"), labels=c("Hasn't", "Has"))
 ldl <- as.numeric(lbdldlsi)
 c <- cut(ldl, c(-Inf, 3.15, Inf), labels=c("Lower", "Higher"))
-#num_rx <- as.numeric(rxd295)
+num_rx <- as.numeric(rxd295)
 asthma <- factor(mcq010, c("2", "1"), labels=c("Hasn't", "Has"))
 diabetes <- factor(diq010, c("2", "1"), labels=c("Hasn't", "Has"))
 quartiles <- cut(ldl, c(-Inf, 2.64, 3.15, 3.83, Inf), labels=c("1st", "2nd", "3rd", "4th"))
 
 # ldl (c) as +/- median
-#png(filename="img/sob_ldl_cc.png")
+png(filename="img/ldl_sob_cc.png")
 cc(sobsi, c,
    ylab="Shortness of Breath Odds", xlab="LDL (mmol/L)",
    main="LDL Protective Against Shortness of Breath"
 )
-#dev.off()
+dev.off()
 Pause()
-png(filename="img/sob_ldl_cc_quartiles.png")
+# ldl in quartiles for SOB
+png(filename="img/ldl_sob_cc_quartiles.png")
 cc(sobsi, quartiles,
    ylab="Odds of Shortness of Breath", xlab="LDL Quartile",
    main="Low LDL Associated with Shortness of Breath"
 )
 dev.off()
-
 Pause()
 plot(sobsi, c, xlab="Shortness of Breath", ylab="LDL")
 Pause()
@@ -78,39 +78,53 @@ scatter.smooth(ldl, sobsi)
 
 Pause()
 model = glm(sobsi ~ c + asthma, family=binomial)
-numeric_model = glm(sobsi ~ ldl + asthma, family=binomial)
-
 print(summary(model))
+Pause()
+numeric_model = glm(sobsi ~ ldl + asthma, family=binomial)
 print(summary(numeric_model))
-
-print("Those with higher than median LDL have odds of shortness of breath:")
-print(exp(coef(model)[2]))
-Pause()
-print("for each 1 mmol/L LDL increase, odds of shortness of breath decrease to")
-print(exp(coef(numeric_model)[2]))
 Pause()
 
+
+# swelling of the extremities (feet/ankles)
 swelling <- factor(cdq080, c(2, 1), labels=c("Hasn't", "Has"))
 model = glm(swelling ~ c, family=binomial)
 print(summary(model))
+png(filename="img/ldl_swelling_cc.png")
 cc(swelling, c, main="Higher LDL Protective Against Swelling Extremities?",
     ylab="Odds of Swollen Extremities", xlab="LDL")
-
+dev.off()
+Pause()
+png(filename="img/ldl_swelling_cc_quartiles.png")
+cc(swelling, quartiles, main="Lowest LDL has Greatest Odds of Swelling Feet/Ankles", ylab="Swelling Odds", xlab="LDL")
+dev.off()
 Pause()
 model = glm(swelling ~ ldl, family=binomial)
 print(summary(model))
 
 # diabetes
 # +/- median ldl not quite statistically significant predictor of diabetes
-cc(diabetes, c, main="Trend Towards Less Diabetes Risk with Higher LDL", ylab="Odds of Diabetes", xlab="LDL")
+
 Pause()
-#ldl         -0.26967    0.08123  -3.320  0.00090 ***
-model = glm(diabetes ~ ldl, family=binomial)> summary(model)
+png(filename="img/ldl_diabetes_quartiles.png")
+plot(diabetes, quartiles, main="Highest LDL Least Likely to Have Diabetes", ylab="LDL Quartiles", xlab="Diabetes")
+dev.off()
+Pause()
+
+png(filename="img/ldl_diabetes_cc.png")
+cc(diabetes, c, main="Trend Towards Less Diabetes Risk with Higher LDL", ylab="Odds of Diabetes", xlab="LDL")
+dev.off()
+Pause()
+
+png(filename="img/ldl_diabetes_cc_quartiles.png")
+cc(diabetes, quartiles, xlab="LDL", ylab="Odds of Diabetes", main="Diabetes and LDL Quartiles")
+dev.off()
+model = glm(diabetes ~ ldl, family=binomial)
 print(summary(model))
 Pause()
-cc(diabetes, quartiles, xlab="LDL", ylab="Odds of Diabetes", main="Diabetes and LDL Quartiles")
 
-
+#ldl         -0.26967    0.08123  -3.320  0.00090 ***
+model = glm(diabetes ~ ldl, family=binomial)
+print(summary(model))
 
 
 
