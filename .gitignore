@@ -1,4 +1,5 @@
 *.pyc
 *.swp
 *.swo
-
+img/
+.DS_Store

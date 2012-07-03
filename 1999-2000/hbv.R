@@ -14,6 +14,8 @@ pfqd = read.csv("csv/quest/PFQ.csv")
 ecqd = read.csv("csv/quest/ECQ.csv")
 #hospital utilization
 huqd = read.csv("csv/quest/HUQ.csv")
+# some versions of R don't need this
+# is there a better way? TODO
 imqd$X <- NULL
 demod$X <- NULL
 mcqd$X <- NULL
@@ -41,42 +43,64 @@ Naively investigate HBV and SpecEd
 spec_ed <- factor(pfq040, c("1", "2"), labels=c("SpecialEd", "Not"))
 hbv <- factor(imq020, c("1", "3"), labels=c("Vaccinated", "UnVaccinated"))
 ecq <- factor(ecq060, c("1", "2"), labels=c("NICU", "Not"))
-add <- factor(mcq060, c("1", "2"), labels=c("Has", "Hasn't"))
+add <- factor(mcq060, c("2", "1"), labels=c("Hasn't", "Has"))
 age <- as.numeric(factor(ridageyr, 1:9))
 health <- as.numeric(factor(huq010, 1:5))
-#Not quite statistically related on its own
+print("Not quite statistically related on its own")
 plot(spec_ed, hbv)
+Pause()
 print(cc(spec_ed, hbv))
 Pause()
-#Significant if add NICU, age, health to glm
+print("Significant if add NICU, age, health to glm")
 model = glm(spec_ed ~ hbv + ecq + age + health, family=binomial)
 print(summary(model))
 Pause()
-#Add ADD status and not significant
+print("Add ADD status and not significant")
 model = glm(spec_ed ~ hbv + ecq + age + health + add, family=binomial)
 print(summary(model))
 Pause()
 
-'
-Use the mix of 2+3 unvaccinated VS 1
-and try to make look bad
-'
+# Use the mix of 2+3 unvaccinated VS 1 and try to make look bad
 hbv <- factor(ifelse(imq020=="2" | imq020=="3" ,"2or3", imq020))
 hbv <- factor(hbv, c("2or3", "1"))
 spec_ed <- factor(pfq040, c("2", "1"), labels=c("Not", "SpecEd"))
 
-cc(spec_ed, hbv)
+print(cc(spec_ed, hbv))
 Pause()
 model = glm(spec_ed ~ hbv + ecq + age + health, family=binomial)
 print(summary(model))
+Pause()
 model = glm(spec_ed ~ hbv + ecq + age + health + add, family=binomial)
 print(summary(model))
 Pause()
 
+#Learning disability & ADD
+plot(spec_ed, add, xlab="SpecialEd", ylab="ADD")
+Pause()
+print(cc(spec_ed, add))
+Pause()
+print(summary(glm(spec_ed~add, family=binomial)))
+Pause()
+
+ld <- factor(mcq083, c("2", "1"), labels=c("No", "Yes"))
+plot(spec_ed, ld)
+Pause()
+print(cc(spec_ed, ld))
+Pause()
+print(summary(glm(spec_ed~ld, family=binomial)))
+Pause()
+
+#Full
+model = glm(spec_ed ~ hbv + ecq + age + health + add + ld, family=binomial)
+print(summary(model))
+
+Pause()
+print(cs(spec_ed, hbv))
+Pause()
 
 '
 print("FEMALE")
-
+Pause()
 # protective female effect
 
 
@@ -84,23 +108,21 @@ detach(byage)
 byage <- keepByAge(female_data, 1, 9)
 attach(byage)
 
-spec_ed <- as.numeric(factor(ifelse(is.element(pfq040, seq("1","2")), pfq040 - 1, NA)))
-hbv <- factor(imq020, c("1", "3"))
-#hbv <- factor(ifelse(imq020=="2" | imq020=="3" ,"2or3", imq020))
-#hbv <- factor(hbv, c("1", "2or3"))
-
-#factor(factor(ifelse(imq020=="2" | imq020=="3" ,"2or3", imq020)), c("1", "2or3"))
-
-ecq <- factor(ecq060, c("1", "2"))
-add <- factor(mcq060, c("1", "2"))
+spec_ed <- factor(pfq040, c("2", "1"), labels=c("No", "Yes"))
+hbv <- factor(imq020, c("3", "1"), labels=c("No", "Yes"))
+#ecq <- factor(ecq060, c("2", "1"), labels=c("No", "Yes"))
+add <- factor(mcq060, c("2", "1"), labels=c("No", "Yes"))
 age <- as.numeric(factor(ridageyr, 1:9))
-health <- as.numeric(factor(huq010, 1:5))
+#health <- as.numeric(factor(huq010, 1:5))
 
-model = lm(spec_ed ~ hbv + ecq + age + health)
+#model = glm(spec_ed ~ hbv + ecq + age + health, family=binomial)
+model = glm(spec_ed ~ hbv + age, family=binomial)
 print(summary(model))
-print(anova(model))
+Pause()
 print(cs(spec_ed, hbv))
+Pause()
 print(cc(spec_ed, hbv))
 '
+
 
 
