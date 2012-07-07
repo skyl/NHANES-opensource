@@ -19,6 +19,8 @@ mcq = read.csv("csv/quest/MCQ.csv")
 cfq = read.csv("csv/quest/CFQ.csv")
 #diabetes
 diq = read.csv("csv/quest/DIQ.csv")
+# RX
+rxq = read.csv("csv/quest/RXQ_RX.csv")
 
 demo$X <- NULL
 lab13am$X <- NULL
@@ -26,12 +28,20 @@ cdq$X <- NULL
 mcq$X <- NULL
 cfq$X <- NULL
 diq$X <- NULL
+rxq$X <- NULL
 
 full = merge(demo, lab13am, by="seqn", all=TRUE)
 full = merge(full, cdq, by="seqn", all=TRUE)
 full = merge(full, mcq, by="seqn", all=TRUE)
 full = merge(full, cfq, by="seqn", all=TRUE)
 full = merge(full, diq, by="seqn", all=TRUE)
+
+print(length(full$ridageyr))
+print(summary(full$ridageyr))
+blah = merge(full, rxq, by="seqn", all=TRUE)
+print(length(blah$ridageyr))
+print(summary(blah$ridageyr))
+
 
 over_20 = full[full$ridageyr >= 20,]
 over_40 = full[full$ridageyr >= 40,]
@@ -62,9 +72,8 @@ cc(diabetes, ldlhalves)
 Pause()
 cc(diabetes, ldlquartiles)
 Pause()
-detach(over_40)
+print(summary(glm(diabetes ~ ldl + over_40$ridageyr, family=binomial)))
 Pause()
-summary(glm(diabetes ~ ldl + over_40$ridageyr, family=binomial))
-
+detach(over_40)
 
 
