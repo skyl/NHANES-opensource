@@ -13,8 +13,6 @@ demo = read.csv("csv/DEMO.csv")
 lab13am = read.csv("csv/lab/LAB13AM.csv")
 #Cardio Dis
 cdq = read.csv("csv/quest/CDQ.csv")
-#RX
-rxq = read.csv("csv/quest/RXQ_RX.csv")
 #med condition
 mcq = read.csv("csv/quest/MCQ.csv")
 #cogfunc
@@ -25,106 +23,48 @@ diq = read.csv("csv/quest/DIQ.csv")
 demo$X <- NULL
 lab13am$X <- NULL
 cdq$X <- NULL
-rxq$X <- NULL
 mcq$X <- NULL
 cfq$X <- NULL
 diq$X <- NULL
 
-mydata = merge(demo, lab13am, by="seqn")
-mydata = merge(mydata, cdq, by="seqn")
-mydata = merge(mydata, rxq, by="seqn")
-mydata = merge(mydata, mcq, by="seqn")
-mydata = merge(mydata, cfq, by="seqn")
-mydata = merge(mydata, diq, by="seqn")
+full = merge(demo, lab13am, by="seqn", all=TRUE)
+full = merge(full, cdq, by="seqn", all=TRUE)
+full = merge(full, mcq, by="seqn", all=TRUE)
+full = merge(full, cfq, by="seqn", all=TRUE)
+full = merge(full, diq, by="seqn", all=TRUE)
 
-#male_data <- withoutFemales(mydata)
-#female_data <- withoutMales(mydata)
-#byage <- keepByAge(male_data, 1, 9)
-
-attach(mydata)
-
-#sobsi <- factor(cdq010, c("1", "2"), labels=c("1", "0"))
-#sobsi <- factor(ifelse(cdq010 == 2, 0, cdq010), c("0", "1"))
-sobsi <- factor(cdq010, c("2", "1"), labels=c("Hasn't", "Has"))
-ldl <- as.numeric(lbdldlsi)
-c <- cut(ldl, c(-Inf, 3.15, Inf), labels=c("Lower", "Higher"))
-num_rx <- as.numeric(rxd295)
-asthma <- factor(mcq010, c("2", "1"), labels=c("Hasn't", "Has"))
-diabetes <- factor(diq010, c("2", "1"), labels=c("Hasn't", "Has"))
-quartiles <- cut(ldl, c(-Inf, 2.64, 3.15, 3.83, Inf), labels=c("1st", "2nd", "3rd", "4th"))
-
-# ldl (c) as +/- median
-png(filename="img/ldl_sob_cc.png")
-cc(sobsi, c,
-   ylab="Shortness of Breath Odds", xlab="LDL (mmol/L)",
-   main="LDL Protective Against Shortness of Breath"
-)
-dev.off()
-Pause()
-# ldl in quartiles for SOB
-png(filename="img/ldl_sob_cc_quartiles.png")
-cc(sobsi, quartiles,
-   ylab="Odds of Shortness of Breath", xlab="LDL Quartile",
-   main="Low LDL Associated with Shortness of Breath"
-)
-dev.off()
-Pause()
-plot(sobsi, c, xlab="Shortness of Breath", ylab="LDL")
-Pause()
-plot(sobsi, ldl, xlab="Shortness of Breath", ylab="LDL",
-     main="Trend is slight")
-Pause()
-scatter.smooth(ldl, sobsi)
-
-Pause()
-model = glm(sobsi ~ c + asthma, family=binomial)
-print(summary(model))
-Pause()
-numeric_model = glm(sobsi ~ ldl + asthma, family=binomial)
-print(summary(numeric_model))
-Pause()
+over_20 = full[full$ridageyr >= 20,]
+over_40 = full[full$ridageyr >= 40,]
+over_60 = full[full$ridageyr >= 60,]
+under_40 = full[full$ridageyr < 40,]
 
 
-# swelling of the extremities (feet/ankles)
-swelling <- factor(cdq080, c(2, 1), labels=c("Hasn't", "Has"))
-model = glm(swelling ~ c, family=binomial)
-print(summary(model))
-png(filename="img/ldl_swelling_cc.png")
-cc(swelling, c, main="Higher LDL Protective Against Swelling Extremities?",
-    ylab="Odds of Swollen Extremities", xlab="LDL")
-dev.off()
-Pause()
-png(filename="img/ldl_swelling_cc_quartiles.png")
-cc(swelling, quartiles, main="Lowest LDL has Greatest Odds of Swelling Feet/Ankles", ylab="Swelling Odds", xlab="LDL")
-dev.off()
-Pause()
-model = glm(swelling ~ ldl, family=binomial)
-print(summary(model))
+loadVariables <- function() {
 
-# diabetes
-# +/- median ldl not quite statistically significant predictor of diabetes
+    ldl <<- as.numeric(lbdldlsi)
+    ldl_summary <<- summary(ldl)
+    ldl_median <<- ldl_summary[3]
+    ldlhalves <<- cut(ldl, c(-Inf, ldl_median, Inf), labels=c("Lower", "Higher"))
+    ldlquartiles <<- cut(ldl, c(-Inf, ldl_summary[2], ldl_median, ldl_summary[5], Inf),
+                     labels=c("1st", "2nd", "3rd", "4th"))
+    # short of breath, stairs/inclines
+    sobsi <<- factor(cdq010, c("2", "1"), labels=c("Hasn't", "Has"))
+    asthma <<- factor(mcq010, c("2", "1"), labels=c("Hasn't", "Has"))
+    diabetes <<- factor(diq010, c("2", "1"), labels=c("Hasn't", "Has"))
+    swelling <<- factor(cdq080, c(2, 1), labels=c("Hasn't", "Has"))
+}
 
-Pause()
-png(filename="img/ldl_diabetes_quartiles.png")
-plot(diabetes, quartiles, main="Highest LDL Least Likely to Have Diabetes", ylab="LDL Quartiles", xlab="Diabetes")
-dev.off()
-Pause()
 
-png(filename="img/ldl_diabetes_cc.png")
-cc(diabetes, c, main="Trend Towards Less Diabetes Risk with Higher LDL", ylab="Odds of Diabetes", xlab="LDL")
-dev.off()
+print("OVER 40")
+attach(over_40)
+loadVariables()
+cc(diabetes, ldlhalves)
 Pause()
-
-png(filename="img/ldl_diabetes_cc_quartiles.png")
-cc(diabetes, quartiles, xlab="LDL", ylab="Odds of Diabetes", main="Diabetes and LDL Quartiles")
-dev.off()
-model = glm(diabetes ~ ldl, family=binomial)
-print(summary(model))
+cc(diabetes, ldlquartiles)
 Pause()
-
-#ldl         -0.26967    0.08123  -3.320  0.00090 ***
-model = glm(diabetes ~ ldl, family=binomial)
-print(summary(model))
+detach(over_40)
+Pause()
+summary(glm(diabetes ~ ldl + over_40$ridageyr, family=binomial))
 
 
 
