@@ -1,0 +1,9 @@
+IPython
+numpy
+scipy
+pandas
+scikit-learn
+matplotlib
+rpy2
+statsmodels==0.4.3
+
