@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF8">
+    <script src="./bower_components/papaparse/papaparse.js"></script>
+    <script src="./bower_components/d3/d3.js"></script>
+    <script src="./bower_components/nvd3/nv.d3.js"></script>
+    <link rel="stylesheet" type="text/css" href="./bower_components/nvd3/nv.d3.css">
+
+<style>
+  .chart {
+    width: 360px;
+    height: 300px;
+  }
+  .chartContainer {
+    float: left;
+  }
+  .chartContainer h5 {
+    text-align: center;
+  }
+</style>
+
+
+  </head>
+  <body>
+    <div class="container with-3d-shadow with-transitions">
+
+      <!-- http://wwwn.cdc.gov/nchs/nhanes/1999-2000/DEMO.htm -->
+
+      <div class="chartContainer">
+        <h5>riagendr</h5>
+        <div id="chartGenders" class="chart"></div>
+      </div>
+
+      <div class="chartContainer">
+        <h5>ridageyr</h5>
+        <div id="chartAges" class="chart"></div>
+      </div>
+
+      <div class="chartContainer">
+        <h5>ridreth1</h5>
+        <div id="chartRaces" class="chart"></div>
+      </div>
+
+      <div class="chartContainer">
+        <h5>dmqmilit</h5>
+        <div id="chartMilitary" class="chart"></div>
+      </div>
+
+      <div class="chartContainer">
+        <h5>dmdborn</h5>
+        <div id="chartBirthCountry" class="chart"></div>
+      </div>
+
+      <div class="chartContainer">
+        <h5>dmdyrsus</h5>
+        <div id="chartYrsUS" class="chart"></div>
+      </div>
+
+
+    </div>
+    <script src="./public/js/explore.js"></script>
+  </body>
+</html>

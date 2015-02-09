@@ -1,0 +1,25 @@
+{
+  "name": "NHANES-opensource",
+  "version": "0.0.0",
+  "homepage": "https://github.com/skyl/NHANES-opensource",
+  "authors": [
+    "Skylar Saveland <skylar.saveland@jpmchase.com>"
+  ],
+  "description": "Browse NHANES data",
+  "keywords": [
+    "nhanes"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "papaparse": "~4.1.0",
+    "nvd3": "~1.2.0"
+  }
+}

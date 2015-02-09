@@ -3,3 +3,4 @@
 *.swo
 img/
 .DS_Store
+/bower_components
