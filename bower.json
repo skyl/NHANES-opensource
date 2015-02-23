@@ -20,6 +20,7 @@
   ],
   "dependencies": {
     "papaparse": "~4.1.0",
-    "nvd3": "~1.2.0"
+    "nvd3": "~1.2.0",
+    "jstat": "~1.1.2"
   }
 }

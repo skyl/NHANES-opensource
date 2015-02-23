@@ -166,7 +166,10 @@ function visualize(data) {
   var dmdBornCounts = countCategory(data, "dmdborn", dmdBornTranslation);
   pieChartFromCounts("#chartBirthCountry", dmdBornCounts);
 
-
+  // nvd3 tooltip does not escape `>`
+  // so, this breaks the layout.
+  // however &lt; doesn't work because the label is placed literally in svg text
+  /*
   var dmdyrsusTranslation = {
     1: "t<1",
     2: "1<t<5",
@@ -184,6 +187,7 @@ function visualize(data) {
   }
   var dmdYrsUSCounts = countCategory(data, "dmdyrsus", dmdyrsusTranslation);
   pieChartFromCounts("#chartYrsUS", dmdYrsUSCounts);
+  */
 
 
 
@@ -200,18 +204,17 @@ function visualize(data) {
 
 
 
-Papa.parse("http://localhost:8080/1999-2000/csv/DEMO.csv", {
+Papa.parse("/1999-2000/csv/DEMO.csv", {
   download: true,
   header: true,
   dynamicTyping: true,
-  // No streaming without SimpleHTTPServer
+  // No streaming with SimpleHTTPServer
   // https://github.com/mholt/PapaParse/issues/94
-  //  step: function(row) {
+  //step: function(row) {
 	// 	console.log("Row:", row.data);
-	// },	
+	//},	
   complete: function(result) {
-    //console.log(result);
-    //window.data = result.data;
+    window.result = result;
     visualize(result.data);
   }
 });
